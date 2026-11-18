@@ -14,6 +14,8 @@ struct ContentView: View {
     @State private var fit = "Regular"
     @State private var style = "Casual"
     @State private var note = ""
+    @State private var showCamera = false
+    @State private var cameraMessage = ""
 
     var body: some View {
         TabView {
@@ -21,6 +23,18 @@ struct ContentView: View {
                 Form {
                     Section("Фотографии") {
                         photoPicker("Фото человека", selection: $personItem, data: personData)
+                        Button {
+                            if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                                showCamera = true
+                            } else {
+                                cameraMessage = "Камера недоступна на этом устройстве."
+                            }
+                        } label: {
+                            Label("Сделать фото", systemImage: "camera")
+                        }
+                        if !cameraMessage.isEmpty {
+                            Text(cameraMessage).font(.caption).foregroundStyle(.secondary)
+                        }
                         photoPicker("Фото одежды", selection: $garmentItem, data: garmentData)
                         Text("Фотографии остаются на устройстве. Автоматическая отправка пока не подключена.")
                             .font(.caption).foregroundStyle(.secondary)
@@ -46,8 +60,15 @@ struct ContentView: View {
                     }
                 }
                 .navigationTitle("Fashion Stylist")
+                .sheet(isPresented: $showCamera) {
+                    CameraPicker { data in
+                        personItem = nil
+                        personData = data
+                    }
+                }
                 .onChange(of: personItem) { item in
-                    Task { personData = try? await item?.loadTransferable(type: Data.self) }
+                    guard let item else { return }
+                    Task { personData = try? await item.loadTransferable(type: Data.self) }
                 }
                 .onChange(of: garmentItem) { item in
                     Task { garmentData = try? await item?.loadTransferable(type: Data.self) }

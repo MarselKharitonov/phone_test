@@ -13,4 +13,5 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.fashionstylist
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: Fashion Stylist
+        INFOPLIST_KEY_NSCameraUsageDescription: Камера нужна, чтобы сделать фотографию для виртуальной примерки.
         SWIFT_VERSION: "5.0"
