@@ -10,3 +10,8 @@ ios/*.xcodeproj/
 *.p8
 *.p12
 *.mobileprovision
+*.sqlite
+*.sqlite3
+*.db
+kaggle.json
+*.ipa
