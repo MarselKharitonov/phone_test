@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Fashion Stylist — ручной прототип</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header><div class="shell"><span class="brand">STUDIO / 01</span><span class="badge">PRIVATE PROTOTYPE</span></div></header>
+  <main class="shell">
+    <section class="intro">
+      <p class="eyebrow">AI FASHION STYLIST · MANUAL MODE</p>
+      <h1>Ваш образ,<br><em>ваши правила.</em></h1>
+      <p>Подготовьте запрос для примерки в чате и загрузите получившееся изображение обратно. Никаких автоматических генераций и оплат.</p>
+    </section>
+    <div class="layout">
+      <section class="panel">
+        <div class="section-heading"><span>01</span><div><h2>Фотографии</h2><p>Останутся только в этом браузере до обновления страницы.</p></div></div>
+        <div class="uploads">
+          <label class="upload"><span>ВАШЕ ФОТО</span><img id="person-preview" alt="Предпросмотр фотографии человека" hidden><strong>Выберите фото человека</strong><small>JPG, PNG или WEBP</small><input id="person" type="file" accept="image/jpeg,image/png,image/webp"></label>
+          <label class="upload"><span>ОДЕЖДА</span><img id="garment-preview" alt="Предпросмотр фотографии вещи" hidden><strong>Выберите фото вещи</strong><small>Фотография конкретного товара</small><input id="garment" type="file" accept="image/jpeg,image/png,image/webp"></label>
+        </div>
+        <p class="note">Прикрепите оба исходных изображения в чат вручную. Используйте только фотографии с необходимыми правами и согласием.</p>
+        <div class="section-heading second"><span>02</span><div><h2>Параметры образа</h2><p>Заполняйте только то, что хотите передать в чат.</p></div></div>
+        <form id="styling-form">
+          <div class="grid">
+            <label>Видимый кадр<select id="frame"><option value="shoulders">По плечи / часть торса</option><option value="waist" selected>По пояс</option><option value="full">Полный рост</option></select></label>
+            <label>Категория вещи<select id="category"><option value="tops">Верхняя одежда / верх</option><option value="bottoms">Брюки / юбка</option><option value="one-pieces">Платье / комбинезон</option></select></label>
+            <label>Стиль<select id="style"><option>Casual</option><option>Smart casual</option><option>Business</option><option>Streetwear</option><option>Minimalist</option><option>Sport</option></select></label>
+            <label>Посадка<select id="fit"><option>Regular</option><option>Slim</option><option>Loose</option><option>Oversized</option></select></label>
+            <label>Сезон<select id="season"><option>Любой</option><option>Весна</option><option>Лето</option><option>Осень</option><option>Зима</option></select></label>
+            <label>Страна / город<input id="location" maxlength="100" placeholder="Россия, Москва"></label>
+            <label>Бюджет, ₽<input id="budget" type="number" min="0" step="1" placeholder="Например, 15000"></label>
+            <label>Название вещи<input id="item" maxlength="160" placeholder="Например, льняная рубашка"></label>
+          </div>
+          <label class="wide">Дополнительные пожелания<textarea id="notes" maxlength="500" rows="3" placeholder="Например, сохранить расстёгнутый воротник"></textarea></label>
+          <label class="consent"><input id="ack" type="checkbox"><span>Я понимаю, что передача фотографий в чат выполняется вручную и регулируется условиями выбранного сервиса.</span></label>
+          <button type="submit">Создать промпт <span>↗</span></button>
+        </form>
+      </section>
+      <aside>
+        <section class="panel prompt-panel">
+          <div class="section-heading"><span>03</span><div><h2>Промпт для чата</h2><p>Сначала заполните параметры.</p></div></div>
+          <textarea id="prompt" readonly rows="15" aria-label="Промпт для чата" placeholder="Здесь появится готовый запрос..."></textarea>
+          <button type="button" class="secondary" id="copy" disabled>Скопировать промпт</button>
+          <p id="status" class="status" role="status" aria-live="polite"></p>
+          <ol><li>Создайте и скопируйте промпт.</li><li>Вставьте его в чат с генерацией изображений и вручную прикрепите оба фото.</li><li>Сохраните ответ и загрузите его ниже.</li></ol>
+        </section>
+        <section class="panel result-panel">
+          <div class="section-heading"><span>04</span><div><h2>Результат</h2><p>Ручная загрузка из чата.</p></div></div>
+          <label class="result-upload"><img id="result-preview" alt="Загруженный результат примерки" hidden><span>＋</span><strong>Загрузить результат</strong><small>JPG, PNG или WEBP</small><input id="result" type="file" accept="image/jpeg,image/png,image/webp"></label>
+          <p class="note">Результат необходимо проверить вручную: лицо, границы кадра, видимые зоны и детали товара могут измениться.</p>
+        </section>
+      </aside>
+    </div>
+    <footer>STUDIO / 01 <span>Экспериментальный прототип · не магазин · без автоматической генерации</span></footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,55 @@
+name: iOS unsigned build
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios-build.yml"
+  pull_request:
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios-build.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show Xcode version
+        run: xcodebuild -version
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        working-directory: ios
+        run: xcodegen generate
+      - name: Build unsigned iOS app
+        working-directory: ios
+        run: >-
+          xcodebuild
+          -project FashionStylist.xcodeproj
+          -scheme FashionStylist
+          -configuration Release
+          -sdk iphoneos
+          -destination 'generic/platform=iOS'
+          -derivedDataPath build
+          CODE_SIGNING_ALLOWED=NO
+          build
+      - name: Package unsigned app
+        working-directory: ios
+        run: |
+          mkdir -p artifacts/Payload
+          cp -R build/Build/Products/Release-iphoneos/FashionStylist.app artifacts/Payload/
+          cd artifacts
+          zip -qr FashionStylist-unsigned.ipa Payload
+      - name: Upload unsigned artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FashionStylist-unsigned
+          path: ios/artifacts/FashionStylist-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 7

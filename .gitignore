@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+ios/build/
+ios/artifacts/
+ios/*.xcodeproj/
+.env
+.env.*
+!.env.example
+*.p8
+*.p12
+*.mobileprovision

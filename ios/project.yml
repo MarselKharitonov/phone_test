@@ -1,0 +1,16 @@
+name: FashionStylist
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "16.0"
+targets:
+  FashionStylist:
+    type: application
+    platform: iOS
+    sources: [FashionStylist]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.fashionstylist
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Fashion Stylist
+        SWIFT_VERSION: "5.0"
