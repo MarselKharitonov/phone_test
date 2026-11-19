@@ -16,6 +16,15 @@ struct ContentView: View {
     @State private var note = ""
     @State private var showCamera = false
     @State private var cameraMessage = ""
+    @State private var category = "tops"
+    @State private var season = "Весна"
+    @State private var location = ""
+    @State private var budget = ""
+    @State private var height = ""
+    @State private var chest = ""
+    @State private var waist = ""
+    @State private var hips = ""
+    @State private var consent = false
 
     var body: some View {
         TabView {
@@ -48,12 +57,33 @@ struct ContentView: View {
                         Picker("Стиль", selection: $style) {
                             ForEach(["Casual", "Smart casual", "Business", "Streetwear"], id: \.self) { Text($0) }
                         }
+                        Picker("Категория вещи", selection: $category) {
+                            Text("Верх").tag("tops")
+                            if frame == "Полный рост" {
+                                Text("Низ").tag("bottoms")
+                                Text("Платье / комбинезон").tag("one-pieces")
+                            }
+                        }
+                        Picker("Сезон", selection: $season) {
+                            ForEach(["Весна", "Лето", "Осень", "Зима"], id: \.self) { Text($0) }
+                        }
+                        TextField("Страна / город", text: $location)
+                        TextField("Бюджет", text: $budget).keyboardType(.decimalPad)
                         Picker("Посадка", selection: $fit) {
                             ForEach(["Regular", "Slim", "Loose", "Oversized"], id: \.self) { Text($0) }
                         }
                         TextField("Пожелания", text: $note, axis: .vertical)
                     }
+                    Section("Мерки, см") {
+                        TextField("Рост", text: $height).keyboardType(.decimalPad)
+                        TextField("Грудь", text: $chest).keyboardType(.decimalPad)
+                        TextField("Талия", text: $waist).keyboardType(.decimalPad)
+                        TextField("Бёдра", text: $hips).keyboardType(.decimalPad)
+                        Text("Размер подбирается только по подтверждённой сетке товара.")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
                     Section {
+                        Toggle("Согласен на обработку и передачу фото после подключения сервера", isOn: $consent)
                         Button("Создать примерку") { }.disabled(true)
                         Text("Генерация через домашний сервер и Kaggle ещё не реализована.")
                             .font(.caption).foregroundStyle(.secondary)
@@ -69,6 +99,9 @@ struct ContentView: View {
                 .onChange(of: personItem) { item in
                     guard let item else { return }
                     Task { personData = try? await item.loadTransferable(type: Data.self) }
+                }
+                .onChange(of: frame) { value in
+                    if value != "Полный рост" { category = "tops" }
                 }
                 .onChange(of: garmentItem) { item in
                     Task { garmentData = try? await item?.loadTransferable(type: Data.self) }
