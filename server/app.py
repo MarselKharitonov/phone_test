@@ -13,6 +13,7 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 
 from server.jobs import JobStore, State
 from stylist.catalog import connect, list_products
+from server.catalog_api import recommend_product
 
 MAX_BODY = 24_000_000
 MAX_PIXELS = 24_000_000
@@ -83,6 +84,24 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if not self.authorized():
             return self.reply(401, {"error": "unauthorized"})
+        if self.path == "/v1/size-recommendations":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if not 0 < length <= 10_000:
+                    return self.reply(413, {"error": "request_too_large"})
+                data = json.loads(self.rfile.read(length))
+                required = data["required"]
+                if (not isinstance(required, list) or not required or
+                    not all(x in ("chest", "waist", "hips", "height", "sleeve", "inseam") for x in required)
+                    or not isinstance(data["measurements"], dict) or type(data["product_id"]) is not int):
+                    raise ValueError("invalid input")
+                with connect(DB) as db:
+                    if db.execute("SELECT 1 FROM products WHERE id=?", (data["product_id"],)).fetchone() is None:
+                        return self.reply(404, {"error": "not_found"})
+                    result = recommend_product(db, data["product_id"], data["measurements"], required)
+                return self.reply(200, result)
+            except (ValueError, KeyError, TypeError, json.JSONDecodeError):
+                return self.reply(400, {"error": "invalid_request"})
         if self.path != "/v1/jobs":
             return self.reply(404, {"error": "not_found"})
         try:

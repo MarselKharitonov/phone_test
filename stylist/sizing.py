@@ -1,8 +1,10 @@
 """Conservative body-measurement matching; no invented garment allowances."""
+import math
 
 
 def recommend(variants, measurements, required):
-    if not required or any(not isinstance(measurements.get(k), (int, float))
+    if not required or any(type(measurements.get(k)) not in (int, float)
+                           or not math.isfinite(measurements[k])
                            or measurements[k] <= 0 for k in required):
         return {"status": "insufficient_data", "size": None}
     candidates = []

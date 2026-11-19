@@ -1,0 +1,23 @@
+[
+  {
+    "source": "example",
+    "external_id": "DEMO-001",
+    "title": "Example shirt — not a real product",
+    "category": "tops",
+    "currency": "RUB",
+    "price_minor": null,
+    "product_url": null,
+    "image_use": "unverified",
+    "updated_at": "2026-11-19T00:00:00Z",
+    "variants": [
+      {
+        "size_label": "M",
+        "stock_status": "unknown",
+        "observed_at": "2026-11-19T00:00:00Z",
+        "measurements": [
+          {"dimension": "chest", "type": "body", "min_cm": 95, "max_cm": 100, "source_url": "https://example.com/fictional-chart"}
+        ]
+      }
+    ]
+  }
+]
