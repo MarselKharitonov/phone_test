@@ -25,6 +25,9 @@ struct ContentView: View {
     @State private var waist = ""
     @State private var hips = ""
     @State private var consent = false
+    @State private var serverToken = ""
+    @State private var serverMessage = ""
+    @State private var sending = false
 
     var body: some View {
         TabView {
@@ -45,7 +48,7 @@ struct ContentView: View {
                             Text(cameraMessage).font(.caption).foregroundStyle(.secondary)
                         }
                         photoPicker("Фото одежды", selection: $garmentItem, data: garmentData)
-                        Text("Фотографии остаются на устройстве. Автоматическая отправка пока не подключена.")
+                        Text("Фото передаются на указанный сервер только после вашего подтверждения.")
                             .font(.caption).foregroundStyle(.secondary)
                     }
                     Section("Образ") {
@@ -84,8 +87,21 @@ struct ContentView: View {
                     }
                     Section {
                         Toggle("Согласен на обработку и передачу фото после подключения сервера", isOn: $consent)
-                        Button("Создать примерку") { }.disabled(true)
-                        Text("Генерация через домашний сервер и Kaggle ещё не реализована.")
+                        Button("Отправить тестовую задачу") {
+                            guard let person = personData, let garment = garmentData else { return }
+                            let frameCode = frame == "По плечи" ? "shoulders" : (frame == "По пояс" ? "waist" : "full")
+                            sending = true
+                            Task {
+                                do {
+                                    serverMessage = try await ServerClient.submit(url: serverURL, token: serverToken,
+                                        person: person, garment: garment, frame: frameCode,
+                                        category: category, consent: consent)
+                                } catch { serverMessage = error.localizedDescription }
+                                sending = false
+                            }
+                        }.disabled(!consent || personData == nil || garmentData == nil || serverToken.isEmpty || sending)
+                        Text(serverMessage)
+                        Text("Тест соединения: генерация через Kaggle пока не подключена.")
                             .font(.caption).foregroundStyle(.secondary)
                     }
                 }
@@ -114,7 +130,9 @@ struct ContentView: View {
                         TextField("https://адрес:порт", text: $serverURL)
                             .textInputAutocapitalization(.never).autocorrectionDisabled()
                             .keyboardType(.URL)
-                        Text("Адрес пока сохраняется только как настройка. Соединение не реализовано.")
+                        SecureField("Токен сервера (до закрытия приложения)", text: $serverToken)
+                            .textInputAutocapitalization(.never).autocorrectionDisabled()
+                        Text("Требуется HTTPS с доверенным сертификатом. Не открывайте сервер напрямую в интернет.")
                             .font(.caption).foregroundStyle(.secondary)
                     }
                     Section("OpenAI API") {
