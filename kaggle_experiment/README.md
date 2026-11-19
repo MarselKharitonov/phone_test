@@ -8,13 +8,16 @@
 
 `inference.py` — исполняемый скрипт для подготовленного приватного Kaggle notebook. Он не устанавливает пакеты, не скачивает веса и сам не загружает фото. Входные файлы оператор предварительно помещает в приватное хранилище и прикрепляет к notebook, удостоверившись в приватности dataset, notebook и output. Не использовать настоящих клиентов, только свои фото или фото с явным согласием, и не включать их в публичный репозиторий. Версии и копии могут сохраняться у Kaggle; локальное удаление не гарантирует удаления у провайдера.
 
-У FASHN v1.5 Apache-2.0, **но** [fashn-human-parser](https://github.com/fashn-AI/fashn-human-parser#license) указывает NVIDIA Source Code License, чья [секция 3.3](https://github.com/NVlabs/SegFormer/blob/master/LICENSE) ограничивает использование некоммерческими исследованиями или оценкой. Здесь допустимость конкретного теста нужно оценить отдельно; для коммерции этот стек считать заблокированным до замены компонента или выяснения прав. Проверить лицензии всех остальных весов и библиотек.
+У FASHN v1.5 Apache-2.0, **но** оригинальный [fashn-human-parser](https://github.com/fashn-AI/fashn-human-parser#license) указывает NVIDIA Source Code License, чья [секция 3.3](https://github.com/NVlabs/SegFormer/blob/master/LICENSE) ограничивает использование некоммерческими исследованиями или оценкой.
+
+`remove_parser.py` изменяет закреплённую версию исходников так, чтобы parser не устанавливался и не вызывался: поддерживается **только** `segmentation_free=True` и `garment_photo_type="flat-lay"`. Это не новая модель сегментации: сегментация вообще исключена. Любой другой режим явно отклоняется. Патч и синтаксис проверены на исходниках, но ни инференс, ни качество, ни юридическая применимость коммерческого использования всего стека не подтверждены. Проверить отдельно веса DWPose/YOLOX, лицензии библиотек, качество и права на входные фотографии. В случае несовпадения исходников патч аварийно останавливается.
 
 После проверки условий Kaggle, квот, согласий и лицензий и явного решения владельца запустить тест в private notebook с GPU. Настройка ниже потребляет GPU-квоту, скачивает модели и зависимости, поэтому автоматически не выполняется. Код проекта и входные файлы должны оказаться в **разных приватных datasets** или быть загружены безопасным вручную проверенным способом. Укажите реальные пути монтирования вместо примеров:
 
 ```bash
 git clone https://github.com/fashn-AI/fashn-vton-1.5.git /kaggle/working/fashn
 git -C /kaggle/working/fashn checkout 7c0f10af3f91ad4048fe9729c470a13ef905d25a
+python /kaggle/input/PROJECT_DATASET/remove_parser.py /kaggle/working/fashn
 python -m pip install /kaggle/working/fashn
 python /kaggle/working/fashn/scripts/download_weights.py --weights-dir /kaggle/working/weights
 mkdir -p /kaggle/working/tryon-output

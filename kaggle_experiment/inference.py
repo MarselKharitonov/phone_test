@@ -42,7 +42,8 @@ def run(person_path: Path, garment_path: Path, weights_path: Path, output_dir: P
     pipeline = TryOnPipeline(weights_dir=str(weights_path))
     loaded = time.monotonic()
     generated = pipeline(person_image=person, garment_image=garment,
-                         category=category, garment_photo_type="flat-lay").images[0]
+                         category=category, garment_photo_type="flat-lay",
+                         segmentation_free=True).images[0]
     finished = time.monotonic()
     # No resize or crop: size differences are explicit and require manual review.
     with output.open("xb") as target:
